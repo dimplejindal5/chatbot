@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coder Instructor AI</title>
+    <style>
+        /* CSS Variables for theming */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #212529;
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --card-bg: #f8f9fa;
+            --border-color: #dee2e6;
+            --input-bg: #ffffff;
+            --input-border: #ced4da;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --switch-bg: #ccc;
+            --switch-knob: white;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --primary-color: #4dabf7;
+            --secondary-color: #adb5bd;
+            --card-bg: #1e1e1e;
+            --border-color: #444;
+            --input-bg: #2c2c2c;
+            --input-border: #555;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --switch-bg: #555;
+            --switch-knob: #121212;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            box-sizing: border-box;
+        }
+
+        /* Header & Navigation */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-item {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Dark Mode Toggle Switch */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+        }
+        .theme-switch {
+            display: inline-block;
+            height: 24px;
+            position: relative;
+            width: 48px;
+        }
+        .theme-switch input {
+            display:none;
+        }
+        .slider {
+            background-color: var(--switch-bg);
+            bottom: 0;
+            cursor: pointer;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            background-color: var(--switch-knob);
+            bottom: 4px;
+            content: "";
+            height: 16px;
+            left: 4px;
+            position: absolute;
+            transition: .4s;
+            width: 16px;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Main Content */
+        .main-content {
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .main-content h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .main-content p {
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+        }
+
+        /* Popular Topics Section */
+        .topics-section {
+            padding: 2rem 0;
+        }
+        .topics-section h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .topic-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 8px var(--shadow-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .topic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px var(--shadow-color);
+        }
+        .topic-card h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        /* Input Form */
+        .input-section {
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            margin-top: 3rem;
+        }
+
+        textarea#userInput {
+            width: 100%;
+            min-height: 150px;
+            padding: 1rem;
+            box-sizing: border-box;
+            border-radius: 8px;
+            border: 1px solid var(--input-border);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            resize: vertical;
+        }
+        textarea#userInput::placeholder {
+            color: var(--secondary-color);
+        }
+
+        button#submitBtn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        button#submitBtn:hover {
+            background-color: #0056b3;
+            transform: scale(1.02);
+        }
+        [data-theme="dark"] button#submitBtn:hover {
+            background-color: #62baff;
+        }
+
+        /* Response Area */
+        #response-container {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            border-left: 5px solid var(--primary-color);
+            white-space: pre-wrap; /* Preserves formatting */
+            font-family: "Courier New", Courier, monospace;
+            line-height: 1.6;
+            min-height: 50px;
+            transition: opacity 0.5s;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">Coder Instructor AI</div>
+        <nav>
+            <div class="nav-item">Profile</div>
+            <div class="nav-item">Questions Solved</div>
+            <div class="theme-switch-wrapper">
+                <label class="theme-switch" for="checkbox">
+                    <input type="checkbox" id="checkbox" />
+                    <div class="slider round"></div>
+                </label>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <h1>Ask a Coding Question</h1>
+            <p><strong>How to use:</strong> Ask any coding-related question in any programming language. The AI is specialized to help with coding problems and concepts. For non-coding questions, responses may be unpredictable!</p>
+        </div>
+
+        <section class="topics-section">
+            <h2>Popular Topics</h2>
+            <div class="topics-grid">
+                <div class="topic-card"><h3>JavaScript Closures</h3></div>
+                <div class="topic-card"><h3>Python Decorators</h3></div>
+                <div class="topic-card"><h3>React Hooks</h3></div>
+                <div class="topic-card"><h3>Recursion Patterns</h3></div>
+                <div class="topic-card"><h3>Async/Await</h3></div>
+            </div>
+        </section>
+
+        <section class="input-section">
+            <h2>Your Coding Question</h2>
+            <textarea id="userInput" placeholder="e.g., Explain closures in JavaScript, How to implement binary search in Python, What is recursion?"></textarea>
+            <button id="submitBtn" onclick="askAI()">Ask Coding Instructor</button>
+        </section>
+
+        <div id="response-container">The AI's response will appear here...</div>
+    </div>
+
+    <script>
+        // Dark Mode Toggle Logic
+        const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+        const currentTheme = localStorage.getItem('theme');
+
+        if (currentTheme) {
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            if (currentTheme === 'dark') {
+                toggleSwitch.checked = true;
+            }
+        }
+
+        function switchTheme(e) {
+            if (e.target.checked) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        toggleSwitch.addEventListener('change', switchTheme, false);
+
+
+        // AI API Call Logic
+        async function askAI() {
+            const userInput = document.getElementById('userInput').value;
+            const responseContainer = document.getElementById('response-container');
+            const submitButton = document.getElementById('submitBtn');
+            
+            // IMPORTANT: Replace with your actual Google Generative AI API key
+            const apiKey = "AIzaSyDHG9x0neb3PILuKr8q8JpOOGQCNIDy14Q"; 
+
+            if (!userInput.trim()) {
+                responseContainer.textContent = "Please enter a question before submitting.";
+                return;
+            }
+
+            // Show loading state
+            submitButton.disabled = true;
+            submitButton.textContent = 'Thinking...';
+            responseContainer.style.opacity = 0.5;
+            responseContainer.textContent = 'Fetching a response...';
+
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+            const requestBody = {
+                "contents": [{ "parts": [{ "text": userInput }] }],
+                "systemInstruction": {
+                    "parts": [{
+                        "text": `You are a Data structure and Algorithm Instructor. You will only reply to the problem related to 
+                        Data structure and Algorithm. You have to solve query of user in simplest way
+                        If user ask any question which is not related to Data structure and Algorithm, reply him rudely
+                        Example: If user ask, How are you
+                        You will reply: You dumb ask me some sensible question, like this message you can reply anything more rudely
+                        
+                        You have to reply him rudely if question is not related to Data structure and Algorithm.
+                        Else reply him politely with simple explanation`
+                    }]
+                }
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error.message}`);
+                }
+
+                const data = await response.json();
+                
+                // Extracting and displaying the text from the response
+                const responseText = data.candidates[0].content.parts[0].text;
+                responseContainer.textContent = responseText;
+
+            } catch (error) {
+                console.error('Error:', error);
+                responseContainer.textContent = `An error occurred: ${error.message}. Please check the API key and console for more details.`;
+            } finally {
+                // Restore button and response area
+                submitButton.disabled = false;
+                submitButton.textContent = 'Ask Coding Instructor';
+                responseContainer.style.opacity = 1;
+            }
+        }
+    </script>
+
+</body>
+</html>
